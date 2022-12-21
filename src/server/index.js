@@ -13,12 +13,22 @@ app.use(bodyParser.json());
 app.use("/", express.static(path.join(__dirname, "../public")));
 
 // your API calls
+app.get('/manifest/:rover(curiosity|opportunity|spirit)?', async (req, res) => {
+    var rover = req.params.rover;
+    try {
+        let response = await fetch(
+            `https://api.nasa.gov/mars-photos/api/v1/manifests/${rover}?api_key=${process.env.API_KEY}`
+        ).then((res) => res.json());
+        res.send({ response });
+    } catch (err) {
+        console.log("error:", err);
+    }
+});
 
-// example API call
-app.get("/Curiosity", async (req, res) => {
+app.get("/Curiosity/:sol", async (req, res) => {
   try {
     let image = await fetch(
-      `https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?sol=1000&api_key=${process.env.API_KEY}`
+      `https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?sol=${req.params.sol}&api_key=${process.env.API_KEY}`
     ).then((res) => res.json());
     res.send({ image });
   } catch (err) {
@@ -26,10 +36,10 @@ app.get("/Curiosity", async (req, res) => {
   }
 });
 
-app.get("/Opportunity", async (req, res) => {
+app.get("/Opportunity/:sol", async (req, res) => {
   try {
     let image = await fetch(
-      `https://api.nasa.gov/mars-photos/api/v1/rovers/opportunity/photos?sol=1000&api_key=${process.env.API_KEY}`
+      `https://api.nasa.gov/mars-photos/api/v1/rovers/opportunity/photos?sol=${req.params.sol}&api_key=${process.env.API_KEY}`
     ).then((res) => res.json());
     res.send({ image });
   } catch (err) {
@@ -37,10 +47,10 @@ app.get("/Opportunity", async (req, res) => {
   }
 });
 
-app.get("/Spirit", async (req, res) => {
+app.get("/Spirit/:sol", async (req, res) => {
   try {
     let image = await fetch(
-      `https://api.nasa.gov/mars-photos/api/v1/rovers/spirit/photos?sol=1000&api_key=${process.env.API_KEY}`
+      `https://api.nasa.gov/mars-photos/api/v1/rovers/spirit/photos?sol=${req.params.sol}&api_key=${process.env.API_KEY}`
     ).then((res) => res.json());
     res.send({ image });
   } catch (err) {
@@ -48,7 +58,5 @@ app.get("/Spirit", async (req, res) => {
   }
 });
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+app.listen(port, () => console.log(`MarsDashboard app listening on port ${port}!`));
 
-// https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?earth_date=2015-6-3&api_key=${process.env.API_KEY}
-// https://api.nasa.gov/planetary/apod?api_key=${process.env.API_KEY}
