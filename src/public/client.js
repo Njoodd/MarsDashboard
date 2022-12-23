@@ -1,3 +1,4 @@
+
 // Our Immutable objects holding the session and manifest information
 let session = {
   selectedRover: -1,
